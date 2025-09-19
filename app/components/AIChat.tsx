@@ -13,47 +13,46 @@ export default function AIChat({ showChat, setShowChat }: { showChat: boolean, s
   ])
   const [inputMessage, setInputMessage] = useState('')
 
-  const knowledgeBase = {
-    'neo4j': 'Munir has 2 years of experience with Neo4j and built the People Intelligence platform using Neo4j with Cypher queries for complex relationship management between people, locations, and multimedia data.',
-    'ai forecasting': 'Munir implemented AI-driven predictive stock analysis in the NoStock ERP system, optimizing inventory levels by intelligently forecasting demand patterns using Python and machine learning.',
-    'j search': 'J Search is a comprehensive business management solution that seamlessly integrates eCommerce and ERP functionalities. Built with JavaScript, Node.js, and React, it includes inventory management, order fulfillment, and supplier interactions.',
-    'python': 'Munir has 4+ years of Python experience, specializing in AI functionalities. He has used Python in projects like HobbyzHub, Biomedical AI platform, and NoStock ERP system.',
-    'tensorflow': 'Munir has 2 years of TensorFlow experience and used it in projects like HobbyzHub for AI-powered personalized experiences and the Biomedical AI platform for disease analysis.',
-    'remytel': 'Remytel is a comprehensive fintech platform Munir architected using TypeScript/Node.js with Bun runtime, enabling global airtime top-ups and remittances across 200+ countries with Stripe integration.',
-    'hobbyzhub': 'HobbyzHub is a dynamic platform Munir developed using Python, Flask, FastAPI, and TensorFlow. It leverages AI for personalized experiences through machine learning algorithms and uses Docker for microservices deployment.',
-    'biomedical': 'The Biomedical AI platform is a cutting-edge solution Munir developed for reverse engineering complex diseases using Python, FastAPI, React, TensorFlow, and PyTorch for analyzing biomedical data.',
-    'experience': 'Munir has 5+ years of software development experience, currently working as a Back-End Engineer at Playstream Interactive, with previous roles at Stone Age Technologies, Omic, and RDX Delta.',
-    'skills': 'Munir specializes in Python (4 years), JavaScript (3 years), Node.js (3 years), React (3 years), Django (2 years), Flask (2 years), TensorFlow (2 years), and Machine Learning (2 years).'
-  }
 
-  const getResponse = (message: string) => {
-    const lowerMessage = message.toLowerCase()
 
-    for (const [key, response] of Object.entries(knowledgeBase)) {
-      if (lowerMessage.includes(key)) {
-        return response
-      }
-    }
-
-    if (lowerMessage.includes('contact') || lowerMessage.includes('hire')) {
-      return "You can reach Munir at munirmohammed038@gmail.com or connect with him on LinkedIn. He's available for immediate hire with 4+ hours PST/EST overlap!"
-    }
-
-    if (lowerMessage.includes('projects')) {
-      return "Munir has built 8+ major projects including Remytel (fintech), HobbyzHub (AI platform), J Search (ERP), Biomedical AI platform, People Intelligence (Neo4j), NoStock (ERP with AI forecasting), EthioEducation, and Intfind."
-    }
-
-    return "I can tell you about Munir's projects (Neo4j, AI forecasting, J Search), his technical skills, experience, or how to contact him. What would you like to know?"
-  }
-
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputMessage.trim()) return
-
+    
     const userMessage = { type: 'user', content: inputMessage }
-    const botResponse = { type: 'bot', content: getResponse(inputMessage) }
-
-    setMessages(prev => [...prev, userMessage, botResponse])
+    setMessages(prev => [...prev, userMessage])
+    
+    const currentInput = inputMessage
     setInputMessage('')
+    
+    // Add typing indicator
+    const typingMessage = { type: 'bot', content: 'Thinking...' }
+    setMessages(prev => [...prev, typingMessage])
+    
+    try {
+      const response = await fetch('/api/ai-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: currentInput }),
+      })
+      
+      const data = await response.json()
+      
+      // Remove typing indicator and add real response
+      setMessages(prev => {
+        const newMessages = [...prev]
+        newMessages[newMessages.length - 1] = { type: 'bot', content: data.response || 'Sorry, I encountered an error. Please try again.' }
+        return newMessages
+      })
+    } catch (error) {
+      // Remove typing indicator and add error message
+      setMessages(prev => {
+        const newMessages = [...prev]
+        newMessages[newMessages.length - 1] = { type: 'bot', content: 'Sorry, I encountered a network error. Please try again.' }
+        return newMessages
+      })
+    }
   }
 
   return (
