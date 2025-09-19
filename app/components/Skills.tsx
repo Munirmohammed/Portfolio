@@ -43,26 +43,26 @@ export default function Skills() {
     : skills.filter(skill => skill.category === filter)
 
   const getSkillSize = (years: number) => {
-    if (years >= 4) return 'text-2xl px-6 py-3'
-    if (years >= 3) return 'text-xl px-5 py-2.5'
-    if (years >= 2) return 'text-lg px-4 py-2'
-    return 'text-base px-3 py-1.5'
+    if (years >= 4) return 'text-base px-4 py-2 font-semibold'
+    if (years >= 3) return 'text-sm px-3 py-1.5 font-medium'
+    if (years >= 2) return 'text-sm px-3 py-1.5'
+    return 'text-xs px-2 py-1'
   }
 
   const getSkillColor = (category: string) => {
     const colors = {
-      'Backend': 'from-blue-500 to-blue-600',
-      'Frontend': 'from-green-500 to-green-600',
-      'AI/ML': 'from-purple-500 to-purple-600',
-      'Database': 'from-red-500 to-red-600',
-      'DevOps': 'from-orange-500 to-orange-600',
-      'Cloud': 'from-cyan-500 to-cyan-600',
-      'Architecture': 'from-indigo-500 to-indigo-600',
-      'Analytics': 'from-pink-500 to-pink-600',
-      'General': 'from-gray-500 to-gray-600',
-      'Soft Skills': 'from-teal-500 to-teal-600'
+      'Backend': 'from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600',
+      'Frontend': 'from-emerald-400 to-emerald-500 hover:from-emerald-500 hover:to-emerald-600',
+      'AI/ML': 'from-violet-400 to-violet-500 hover:from-violet-500 hover:to-violet-600',
+      'Database': 'from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600',
+      'DevOps': 'from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600',
+      'Cloud': 'from-sky-400 to-sky-500 hover:from-sky-500 hover:to-sky-600',
+      'Architecture': 'from-indigo-400 to-indigo-500 hover:from-indigo-500 hover:to-indigo-600',
+      'Analytics': 'from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600',
+      'General': 'from-slate-400 to-slate-500 hover:from-slate-500 hover:to-slate-600',
+      'Soft Skills': 'from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600'
     }
-    return colors[category as keyof typeof colors] || 'from-gray-500 to-gray-600'
+    return colors[category as keyof typeof colors] || 'from-slate-400 to-slate-500 hover:from-slate-500 hover:to-slate-600'
   }
 
   const playHoverSound = () => {
@@ -136,7 +136,7 @@ export default function Skills() {
                   playHoverSound()
                 }}
                 onMouseEnter={playHoverSound}
-                className={`skill-tag bg-gradient-to-r ${getSkillColor(skill.category)} text-white rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300 ${getSkillSize(skill.years)}`}
+                className={`skill-tag bg-gradient-to-r ${getSkillColor(skill.category)} text-white rounded-full shadow-md hover:shadow-lg transition-all duration-300 ${getSkillSize(skill.years)} border border-white/20`}
               >
                 {skill.name}
               </motion.button>

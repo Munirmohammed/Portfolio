@@ -1,13 +1,34 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { motion, AnimatePresence, useDragControls } from 'framer-motion'
+import { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence, useDragControls, useAnimation } from 'framer-motion'
 import { ExternalLink, Github, X, Maximize2 } from 'lucide-react'
 
 export default function Projects() {
   const [selectedProject, setSelectedProject] = useState<string | null>(null)
   const [draggedPositions, setDraggedPositions] = useState<{[key: string]: {x: number, y: number}}>({})
+  const [isDragging, setIsDragging] = useState<{[key: string]: boolean}>({})
+  const [dragConstraints, setDragConstraints] = useState({ left: -500, right: 500, top: -400, bottom: 400 })
+  const [resetKey, setResetKey] = useState(0)
   const dragControls = useDragControls()
+
+  // Update drag constraints based on viewport size
+  useEffect(() => {
+    const updateConstraints = () => {
+      if (typeof window !== 'undefined') {
+        setDragConstraints({
+          left: -window.innerWidth * 0.7,
+          right: window.innerWidth * 0.7,
+          top: -window.innerHeight * 0.4,
+          bottom: window.innerHeight * 0.4
+        })
+      }
+    }
+
+    updateConstraints()
+    window.addEventListener('resize', updateConstraints)
+    return () => window.removeEventListener('resize', updateConstraints)
+  }, [])
 
   const projects = [
     {
@@ -152,7 +173,12 @@ export default function Projects() {
     }
   ]
 
-  const handleDrag = (projectId: string, info: any) => {
+  const handleDragStart = (projectId: string) => {
+    setIsDragging(prev => ({ ...prev, [projectId]: true }))
+  }
+
+  const handleDragEnd = (projectId: string, info: any) => {
+    setIsDragging(prev => ({ ...prev, [projectId]: false }))
     setDraggedPositions(prev => ({
       ...prev,
       [projectId]: { x: info.offset.x, y: info.offset.y }
@@ -160,7 +186,12 @@ export default function Projects() {
   }
 
   const resetPositions = () => {
+    // Clear all positions and dragging states
     setDraggedPositions({})
+    setIsDragging({})
+    
+    // Force complete re-render by updating key
+    setResetKey(prev => prev + 1)
   }
 
   return (
@@ -191,22 +222,43 @@ export default function Projects() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
           {projects.map((project, index) => (
             <motion.div
-              key={project.id}
+              key={`${project.id}-${resetKey}`}
+              data-project-id={project.id}
               drag
-              dragControls={dragControls}
-              dragElastic={0.1}
-              dragConstraints={{ left: -200, right: 200, top: -200, bottom: 200 }}
-              onDrag={(event, info) => handleDrag(project.id, info)}
+              dragMomentum={false}
+              dragElastic={0}
+              dragConstraints={dragConstraints}
+              onDragStart={() => handleDragStart(project.id)}
+              onDragEnd={(event, info) => handleDragEnd(project.id, info)}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              whileHover={{ scale: 1.02, rotateZ: Math.random() * 4 - 2 }}
-              whileDrag={{ scale: 1.05, rotateZ: 5, zIndex: 10 }}
-              className="draggable-card bg-white dark:bg-dark-900 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
-              style={{
+              whileHover={!isDragging[project.id] ? { 
+                scale: 1.02, 
+                rotateZ: Math.random() * 2 - 1,
+              } : {}}
+              whileDrag={{ 
+                scale: 1.05, 
+                rotateZ: 3,
+                zIndex: 1000,
+              }}
+              animate={{
                 x: draggedPositions[project.id]?.x || 0,
                 y: draggedPositions[project.id]?.y || 0,
+                opacity: 1,
+              }}
+              transition={{
+                opacity: { duration: 0.6, delay: index * 0.1 },
+                x: { type: "spring", stiffness: 500, damping: 30 },
+                y: { type: "spring", stiffness: 500, damping: 30 },
+                scale: { duration: 0.2 },
+                rotateZ: { duration: 0.2 }
+              }}
+              className={`draggable-card bg-white dark:bg-dark-900 rounded-xl shadow-lg hover:shadow-2xl overflow-hidden ${
+                isDragging[project.id] ? 'dragging' : ''
+              }`}
+              style={{
+                transition: isDragging[project.id] ? 'none' : 'transform 0.2s ease, box-shadow 0.2s ease'
               }}
             >
               <div className="p-6">

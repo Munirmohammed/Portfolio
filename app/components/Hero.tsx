@@ -8,7 +8,7 @@ export default function Hero() {
   const [displayText, setDisplayText] = useState('')
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
-  
+
   const texts = [
     'Backend Engineer',
     'Javascript Developer',
@@ -56,7 +56,7 @@ export default function Hero() {
           <h1 className="text-5xl md:text-7xl font-bold mb-6">
             <span className="gradient-text">Munir Mohammed</span>
           </h1>
-          
+
           <div className="h-16 mb-8">
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 typing-cursor">
               {displayText}
@@ -89,7 +89,7 @@ export default function Hero() {
             >
               View My Work
             </motion.a>
-            
+
             <motion.a
               href="#contact"
               whileHover={{ scale: 1.05 }}

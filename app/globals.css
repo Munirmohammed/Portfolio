@@ -59,24 +59,30 @@ body {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.draggable-card:hover {
+.draggable-card:hover:not(.dragging) {
   transform: translateY(-5px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
+.draggable-card.dragging {
+  cursor: grabbing;
+  transition: none !important;
+  z-index: 1000;
+}
+
 .draggable-card:active {
   cursor: grabbing;
-  transform: scale(1.05);
 }
 
 .skill-tag {
   transition: all 0.3s ease;
   cursor: pointer;
+  backdrop-filter: blur(10px);
 }
 
 .skill-tag:hover {
-  transform: scale(1.1);
-  box-shadow: 0 5px 15px rgba(6, 182, 212, 0.3);
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .timeline-item {
