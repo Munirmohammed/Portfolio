@@ -40,7 +40,7 @@ export default function Contact() {
 
       if (response.ok) {
         setSubmitStatus('success')
-        setStatusMessage('Message sent successfully! Munir will get back to you soon.')
+        setStatusMessage('Message sent successfully! I will get back to you soon.')
         setFormData({ name: '', email: '', subject: '', message: '' })
       } else {
         setSubmitStatus('error')
@@ -264,8 +264,8 @@ export default function Contact() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={`flex items-center gap-2 p-3 rounded-lg ${submitStatus === 'success'
-                      ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
-                      : 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300'
+                    ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
+                    : 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300'
                     }`}
                 >
                   {submitStatus === 'success' ? (
@@ -283,8 +283,8 @@ export default function Contact() {
                 whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
                 whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
                 className={`w-full flex items-center justify-center gap-3 px-6 py-3 rounded-lg font-medium transition-all duration-300 ${isSubmitting
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-primary-500 to-accent-500 hover:shadow-lg'
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-primary-500 to-accent-500 hover:shadow-lg'
                   } text-white`}
               >
                 {isSubmitting ? (
